@@ -1,6 +1,5 @@
 <template>
     <div class="add-task">
-        <h3>Add New Task</h3>
         <form @submit.prevent="submitForm">
             <div>
                 <label for="title">Title:</label>
@@ -42,8 +41,12 @@ export default {
     },
     methods: {
         submitForm() {
-            this.$emit('addTask', this.task);
-            this.resetForm();
+            if (this.task.title.trim() !== '' && this.task.columnId) {
+                this.$emit('addTask', this.task);
+                this.resetForm();
+            } else {
+                console.error('Task title or columnId is missing');
+            }
         },
         resetForm() {
             this.task = {
@@ -58,8 +61,7 @@ export default {
 
 <style scoped>
 .add-task {
-    margin: 10px;
-    padding: 10px;
+    padding: 20px;
     border: 1px solid #ddd;
     background-color: #f9f9f9;
 }

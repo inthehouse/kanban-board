@@ -1,22 +1,22 @@
 <template>
     <div v-if="showPopup" class="popup-overlay">
         <div class="popup-content">
-            <h3>Add New Task</h3>
-            <input v-model="taskName" placeholder="Task Name" />
-            <textarea v-model="taskDescription" placeholder="Task Description"></textarea>
-            <select v-model="selectedColumnId">
-                <option v-for="column in columns" :key="column.id" :value="column.id">
-                    {{ column.name }}
-                </option>
-            </select>
-            <button @click="addTask">Add Task</button>
-            <button @click="closePopup">Cancel</button>
+            <div class="header">
+                <h3>Add New Task</h3>
+                <button class="close-btn" @click="closePopup">x</button>
+            </div>
+            <AddTask :columns="columns" @addTask="handleAddTask" />
         </div>
     </div>
 </template>
 
 <script>
+import AddTask from '@/components/task/AddTask.vue';
+
 export default {
+    components: {
+        AddTask
+    },
     props: {
         columns: {
             type: Array,
@@ -27,24 +27,13 @@ export default {
             required: true
         }
     },
-    data() {
-        return {
-            taskName: '',
-            taskDescription: '',
-            selectedColumnId: this.columns[0]?.id
-        };
-    },
     methods: {
-        addTask() {
-            if (this.taskName.trim() !== '' && this.selectedColumnId) {
-                this.$emit('addTask', {
-                    columnId: this.selectedColumnId,
-                    task: {
-                        name: this.taskName,
-                        description: this.taskDescription
-                    }
-                });
+        handleAddTask(task) {
+            if (task && task.title && task.columnId) {
+                this.$emit('addTask', task);
                 this.closePopup();
+            } else {
+                console.error('Invalid task data:', task);
             }
         },
         closePopup() {
@@ -72,16 +61,25 @@ export default {
     padding: 20px;
     border-radius: 5px;
     width: 300px;
+    position: relative;
 }
 
-.popup-content input,
-.popup-content textarea,
-.popup-content select {
-    width: 100%;
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 10px;
 }
 
-.popup-content button {
-    margin-right: 10px;
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #333;
+}
+
+.close-btn:hover {
+    color: #ff0000;
 }
 </style>

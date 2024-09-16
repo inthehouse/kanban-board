@@ -25,7 +25,6 @@ export default {
         return {
             columns: [],
             showTaskPopup: false,
-            selectedColumnId: null,
         };
     },
     methods: {
@@ -68,20 +67,22 @@ export default {
             this.columns = this.columns.filter((column) => column.id !== columnId);
             this.saveState();
         },
-        addNewTask({ columnId, task }) {
-            const column = this.columns.find((col) => col.id === columnId);
+        addNewTask(task) {
+            const column = this.columns.find((col) => col.id === task.columnId);
             if (column) {
                 column.cards.push({
                     id: Date.now().toString(),
-                    content: task.name,
+                    content: task.title,
                     description: task.description,
                 });
                 this.saveState();
+                this.closeTaskPopup();
+            } else {
+                console.error('Column not found');
             }
-            this.showTaskPopup = false; 
         },
         closeTaskPopup() {
-            this.showTaskPopup = false; 
+            this.showTaskPopup = false;
         },
     },
     mounted() {

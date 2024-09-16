@@ -4,7 +4,8 @@
 
         <div class="kanban-board">
             <DraggableBoardColumn v-for="column in columns" :key="column.id" :column="column"
-                @cardMoved="handleCardMoved" @deleteColumn="handleDeleteColumn" />
+                @taskMoved="handleTaskMoved" @deleteColumn="handleDeleteColumn"
+                @updateColumnName="handleUpdateColumnName" />
         </div>
 
         <TaskPopup v-if="showTaskPopup" :columns="columns" :showPopup="showTaskPopup" @addTask="addNewTask"
@@ -34,9 +35,9 @@ export default {
                 this.columns = JSON.parse(savedState);
             } else {
                 this.columns = [
-                    { id: '1', name: 'To Do', cards: [] },
-                    { id: '2', name: 'In Progress', cards: [] },
-                    { id: '3', name: 'Done', cards: [] },
+                    { id: '1', name: 'To Do', tasks: [] },
+                    { id: '2', name: 'In Progress', tasks: [] },
+                    { id: '3', name: 'Done', tasks: [] },
                 ];
             }
         },
@@ -52,25 +53,34 @@ export default {
                 return;
             }
 
-            const cardIndex = fromColumn.cards.findIndex((card) => card.id === cardId);
+            const cardIndex = fromColumn.tasks.findIndex((card) => card.id === cardId);
 
             if (cardIndex === -1) {
                 console.error('Card not found in fromColumn');
                 return;
             }
 
-            const [card] = fromColumn.cards.splice(cardIndex, 1);
-            toColumn.cards.push(card);
+            const [card] = fromColumn.tasks.splice(cardIndex, 1);
+            toColumn.tasks.push(card);
             this.saveState();
         },
         handleDeleteColumn({ columnId }) {
             this.columns = this.columns.filter((column) => column.id !== columnId);
             this.saveState();
         },
+        handleUpdateColumnName({ columnId, newName }) {
+            const column = this.columns.find((col) => col.id === columnId);
+            if (column) {
+                column.name = newName;
+                this.saveState();
+            } else {
+                console.error('Column not found');
+            }
+        },
         addNewTask(task) {
             const column = this.columns.find((col) => col.id === task.columnId);
             if (column) {
-                column.cards.push({
+                column.tasks.push({
                     id: Date.now().toString(),
                     title: task.title,
                     description: task.description,
@@ -93,20 +103,15 @@ export default {
 
 <style scoped>
 .kanban-board-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.add-task-button {
-    margin-bottom: 20px;
-    padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
+    padding: 20px;
 }
 
 .kanban-board {
     display: flex;
     overflow-x: auto;
+}
+
+.add-task-button {
+    margin-bottom: 10px;
 }
 </style>

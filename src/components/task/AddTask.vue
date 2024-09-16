@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Task from '@/models/Task';
+import { Task } from '@/models/Task';
 
 export default {
     props: {

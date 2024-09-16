@@ -12,8 +12,8 @@
                     <div class="menu-container">
                         <button class="menu-button" @click="toggleMenu">⋮</button>
                         <div v-if="isMenuOpen" class="menu-dropdown">
-                            <button @click="sortCards('contentAsc')">Sort By Name (A-Z)</button>
-                            <button @click="sortCards('contentDesc')">Sort By Name (Z-A)</button>
+                            <button @click="sortTasks('contentAsc')">Sort By Name (A-Z)</button>
+                            <button @click="sortTasks('contentDesc')">Sort By Name (Z-A)</button>
                             <button @click="confirmDeleteColumn">🗑️ Delete</button>
                         </div>
                     </div>
@@ -21,8 +21,8 @@
             </div>
         </template>
         <div ref="sortableContainer" class="sortable-container">
-            <DraggableTaskCard v-for="card in sortedCards" :key="card.id" :title="card.title"
-                :description="card.description" :data-id="card.id" @cardMoved="handleCardMoved" />
+            <DraggableTaskCard v-for="task in sortedTasks" :key="task.id" :title="task.title"
+                :description="task.description" :data-id="task.id" @taskMoved="handleTaskMoved" />
         </div>
     </BoardColumn>
 </template>
@@ -31,6 +31,7 @@
 import BoardColumn from '@/components/column/BoardColumn.vue';
 import DraggableTaskCard from '@/components/task/DraggableTaskCard.vue';
 import Sortable from 'sortablejs';
+import { Column } from '@/models/Column';
 
 export default {
     components: {
@@ -52,17 +53,17 @@ export default {
         };
     },
     methods: {
-        handleCardMoved(event) {
+        handleTaskMoved(event) {
             const item = event.item;
             const toColumn = event.to;
             if (item && toColumn) {
-                const cardId = item.dataset.id;
+                const taskId = item.dataset.id;
                 const fromColumnId = this.column.id;
                 const toColumnId = toColumn.dataset.columnId;
 
-                if (cardId && toColumnId) {
-                    this.$emit('cardMoved', {
-                        cardId,
+                if (taskId && toColumnId) {
+                    this.$emit('taskMoved', {
+                        taskId,
                         fromColumnId,
                         toColumnId,
                     });
@@ -79,15 +80,16 @@ export default {
                 this.$emit('deleteColumn', { columnId: this.column.id });
             }
         },
-        sortCards(option) {
+        sortTasks(option) {
             this.sortOption = option;
         },
         saveColumnName() {
             if (this.editableColumnName.trim()) {
                 this.isEditing = false;
+                const column = new Column(this.column.id, this.editableColumnName, this.column.tasks);
                 this.$emit('updateColumnName', {
-                    columnId: this.column.id,
-                    newName: this.editableColumnName,
+                    columnId: column.id,
+                    newName: column.name,
                 });
             }
         },
@@ -100,22 +102,23 @@ export default {
             Sortable.create(this.$refs.sortableContainer, {
                 group: 'tasks',
                 animation: 150,
-                onEnd: this.handleCardMoved,
+                onEnd: this.handleTaskMoved,
             });
         });
     },
     computed: {
-        sortedCards() {
-            if (!this.sortOption) return this.column.cards;
+        sortedTasks() {
+            if (!this.sortOption) return this.column.tasks;
             const sortingFunctions = {
                 contentAsc: (a, b) => a.title.localeCompare(b.title),
                 contentDesc: (a, b) => b.title.localeCompare(a.title),
             };
-            return [...this.column.cards].sort(sortingFunctions[this.sortOption]);
+            return [...this.column.tasks].sort(sortingFunctions[this.sortOption]);
         },
     }
 };
 </script>
+
 
 <style scoped>
 .sortable-container {

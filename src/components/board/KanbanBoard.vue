@@ -1,48 +1,30 @@
 <template>
     <div class="kanban-board-wrapper">
-        <button class="add-task-button" @click="showTaskModal = true">Add Task</button>
+        <button class="add-task-button" @click="showTaskPopup = true">Add Task</button>
 
         <div class="kanban-board">
             <DraggableBoardColumn v-for="column in columns" :key="column.id" :column="column"
                 @cardMoved="handleCardMoved" @deleteColumn="handleDeleteColumn" />
         </div>
 
-        <div v-if="showTaskModal" class="modal-overlay">
-            <div class="modal-content">
-                <h3>Add New Task</h3>
-                <label for="taskName">Task Name:</label>
-                <input v-model="newTask.name" id="taskName" placeholder="Task Name" />
-
-                <label for="taskDescription">Task Description:</label>
-                <input v-model="newTask.description" id="taskDescription" placeholder="Task Description" />
-
-                <label for="columnSelect">Select Column:</label>
-                <select v-model="selectedColumnId" id="columnSelect">
-                    <option v-for="column in columns" :key="column.id" :value="column.id">{{ column.name }}</option>
-                </select>
-
-                <button @click="addNewTask">Add Task</button>
-                <button @click="showTaskModal = false">Cancel</button>
-            </div>
-        </div>
+        <TaskPopup v-if="showTaskPopup" :columns="columns" :showPopup="showTaskPopup" @addTask="addNewTask"
+            @closePopup="closeTaskPopup" />
     </div>
 </template>
 
 <script>
 import DraggableBoardColumn from '@/components/column/DraggableBoardColumn.vue';
+import TaskPopup from '@/components/task/TaskPopup.vue';
 
 export default {
     components: {
         DraggableBoardColumn,
+        TaskPopup,
     },
     data() {
         return {
             columns: [],
-            showTaskModal: false,
-            newTask: {
-                name: '',
-                description: '',
-            },
+            showTaskPopup: false,
             selectedColumnId: null,
         };
     },
@@ -86,20 +68,20 @@ export default {
             this.columns = this.columns.filter((column) => column.id !== columnId);
             this.saveState();
         },
-        addNewTask() {
-            if (this.newTask.name.trim() !== '' && this.selectedColumnId) {
-                const column = this.columns.find((col) => col.id === this.selectedColumnId);
-                if (column) {
-                    column.cards.push({
-                        id: Date.now().toString(),
-                        content: this.newTask.name,
-                        description: this.newTask.description,
-                    });
-                    this.saveState();
-                }
-                this.newTask = { name: '', description: '' };
-                this.showTaskModal = false;
+        addNewTask({ columnId, task }) {
+            const column = this.columns.find((col) => col.id === columnId);
+            if (column) {
+                column.cards.push({
+                    id: Date.now().toString(),
+                    content: task.name,
+                    description: task.description,
+                });
+                this.saveState();
             }
+            this.showTaskPopup = false; 
+        },
+        closeTaskPopup() {
+            this.showTaskPopup = false; 
         },
     },
     mounted() {
@@ -125,46 +107,5 @@ export default {
 .kanban-board {
     display: flex;
     overflow-x: auto;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    width: 300px;
-}
-
-.modal-content h3 {
-    margin-bottom: 20px;
-}
-
-.modal-content label {
-    display: block;
-    margin-top: 10px;
-}
-
-.modal-content input,
-.modal-content select {
-    width: 100%;
-    margin-top: 5px;
-    padding: 8px;
-    margin-bottom: 10px;
-}
-
-.modal-content button {
-    margin-right: 10px;
-    padding: 8px 12px;
 }
 </style>

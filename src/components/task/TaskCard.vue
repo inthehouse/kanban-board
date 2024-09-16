@@ -1,6 +1,6 @@
 <template>
     <div class="task-card">
-        <p>{{ content }}</p>
+        <p>{{ title }}</p>
     </div>
 </template>
 
@@ -8,7 +8,7 @@
 export default {
     name: 'TaskCard',
     props: {
-        content: {
+        title: {
             type: String,
             required: true
         }

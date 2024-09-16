@@ -1,6 +1,6 @@
 <template>
-    <div ref="draggableCard">
-        <TaskCard :content="content" />
+    <div ref="draggableCard" :data-id="dataId">
+        <TaskCard :title="title" />
     </div>
 </template>
 
@@ -14,11 +14,15 @@ export default {
         TaskCard
     },
     props: {
-        content: {
+        title: {
             type: String,
             required: true
         },
         dataId: {
+            type: String,
+            required: true
+        },
+        columnId: {
             type: String,
             required: true
         }
@@ -27,10 +31,11 @@ export default {
         Sortable.create(this.$refs.draggableCard, {
             group: 'tasks',
             animation: 150,
-            // eslint-disable-next-line no-unused-vars
             onEnd: (event) => {
                 this.$emit('cardMoved', {
-                    cardId: this.dataId
+                    cardId: this.dataId,
+                    fromColumnId: this.columnId,
+                    toColumnId: event.from.dataset.columnId
                 });
             }
         });

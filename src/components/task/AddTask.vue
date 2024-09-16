@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import Task from '@/models/Task';
+
 export default {
     props: {
         columns: {
@@ -42,7 +44,13 @@ export default {
     methods: {
         submitForm() {
             if (this.task.title.trim() !== '' && this.task.columnId) {
-                this.$emit('addTask', this.task);
+                const newTask = new Task(
+                    Date.now().toString(), //unique id
+                    this.task.title,
+                    this.task.description
+                );
+                console.log('Emitting task:', { ...newTask, columnId: this.task.columnId });
+                this.$emit('addTask', { ...newTask, columnId: this.task.columnId });
                 this.resetForm();
             } else {
                 console.error('Task title or columnId is missing');

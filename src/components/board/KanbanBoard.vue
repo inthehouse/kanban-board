@@ -72,7 +72,7 @@ export default {
             if (column) {
                 column.cards.push({
                     id: Date.now().toString(),
-                    content: task.title,
+                    title: task.title,
                     description: task.description,
                 });
                 this.saveState();

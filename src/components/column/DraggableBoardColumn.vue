@@ -21,7 +21,7 @@
             </div>
         </template>
         <div ref="sortableContainer" class="sortable-container">
-            <DraggableTaskCard v-for="card in sortedCards" :key="card.id" :content="card.content"
+            <DraggableTaskCard v-for="card in sortedCards" :key="card.id" :title="card.title"
                 :description="card.description" :data-id="card.id" @cardMoved="handleCardMoved" />
         </div>
     </BoardColumn>
@@ -108,8 +108,8 @@ export default {
         sortedCards() {
             if (!this.sortOption) return this.column.cards;
             const sortingFunctions = {
-                contentAsc: (a, b) => a.content.localeCompare(b.content),
-                contentDesc: (a, b) => b.content.localeCompare(a.content),
+                contentAsc: (a, b) => a.title.localeCompare(b.title),
+                contentDesc: (a, b) => b.title.localeCompare(a.title),
             };
             return [...this.column.cards].sort(sortingFunctions[this.sortOption]);
         },

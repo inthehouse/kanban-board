@@ -3,12 +3,12 @@
         <button class="add-task-button" @click="showTaskPopup = true">Add Task</button>
 
         <div class="kanban-board">
-            <DraggableBoardColumn v-for="column in columns" :key="column.id" :column="column"
+            <DraggableBoardColumn v-for="column in board.columns" :key="column.id" :column="column"
                 @taskMoved="handleTaskMoved" @deleteColumn="handleDeleteColumn"
                 @updateColumnName="handleUpdateColumnName" />
         </div>
 
-        <TaskPopup v-if="showTaskPopup" :columns="columns" :showPopup="showTaskPopup" @addTask="addNewTask"
+        <TaskPopup v-if="showTaskPopup" :columns="board.columns" :showPopup="showTaskPopup" @addTask="addNewTask"
             @closePopup="closeTaskPopup" />
     </div>
 </template>
@@ -16,6 +16,8 @@
 <script>
 import DraggableBoardColumn from '@/components/column/DraggableBoardColumn.vue';
 import TaskPopup from '@/components/task/TaskPopup.vue';
+import { Board } from '@/models/Board';
+import { Column } from '@/models/Column';
 
 export default {
     components: {
@@ -24,7 +26,7 @@ export default {
     },
     data() {
         return {
-            columns: [],
+            board: new Board(),
             showTaskPopup: false,
         };
     },
@@ -32,64 +34,38 @@ export default {
         loadState() {
             const savedState = localStorage.getItem('kanbanBoardState');
             if (savedState) {
-                this.columns = JSON.parse(savedState);
+                const columnsData = JSON.parse(savedState);
+                this.board.columns = columnsData.map(col => new Column(col.id, col.name, col.tasks));
             } else {
-                this.columns = [
-                    { id: '1', name: 'To Do', tasks: [] },
-                    { id: '2', name: 'In Progress', tasks: [] },
-                    { id: '3', name: 'Done', tasks: [] },
-                ];
+                this.board = new Board([
+                    new Column('1', 'To Do', []),
+                    new Column('2', 'In Progress', []),
+                    new Column('3', 'Done', []),
+                ]);
             }
         },
         saveState() {
-            localStorage.setItem('kanbanBoardState', JSON.stringify(this.columns));
+            localStorage.setItem('kanbanBoardState', JSON.stringify(this.board.columns));
         },
-        handleCardMoved({ cardId, fromColumnId, toColumnId }) {
-            const fromColumn = this.columns.find((col) => col.id === fromColumnId);
-            const toColumn = this.columns.find((col) => col.id === toColumnId);
-
-            if (!fromColumn || !toColumn) {
-                console.error('Column not found');
-                return;
-            }
-
-            const cardIndex = fromColumn.tasks.findIndex((card) => card.id === cardId);
-
-            if (cardIndex === -1) {
-                console.error('Card not found in fromColumn');
-                return;
-            }
-
-            const [card] = fromColumn.tasks.splice(cardIndex, 1);
-            toColumn.tasks.push(card);
+        handleTaskMoved({ cardId, fromColumnId, toColumnId }) {
+            this.board.moveTask(cardId, fromColumnId, toColumnId);
             this.saveState();
         },
         handleDeleteColumn({ columnId }) {
-            this.columns = this.columns.filter((column) => column.id !== columnId);
+            this.board.removeColumn(columnId);
             this.saveState();
         },
         handleUpdateColumnName({ columnId, newName }) {
-            const column = this.columns.find((col) => col.id === columnId);
-            if (column) {
-                column.name = newName;
-                this.saveState();
-            } else {
-                console.error('Column not found');
-            }
+            this.board.updateColumnName(columnId, newName);
+            this.saveState();
         },
         addNewTask(task) {
-            const column = this.columns.find((col) => col.id === task.columnId);
-            if (column) {
-                column.tasks.push({
-                    id: Date.now().toString(),
-                    title: task.title,
-                    description: task.description,
-                });
-                this.saveState();
-                this.closeTaskPopup();
-            } else {
-                console.error('Column not found');
-            }
+            this.board.addTaskToColumn(task.columnId, {
+                title: task.title,
+                description: task.description,
+            });
+            this.saveState();
+            this.closeTaskPopup();
         },
         closeTaskPopup() {
             this.showTaskPopup = false;

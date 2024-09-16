@@ -49,7 +49,6 @@ export default {
                     this.task.title,
                     this.task.description
                 );
-                console.log('Emitting task:', { ...newTask, columnId: this.task.columnId });
                 this.$emit('addTask', { ...newTask, columnId: this.task.columnId });
                 this.resetForm();
             } else {

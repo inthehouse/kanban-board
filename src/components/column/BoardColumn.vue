@@ -20,7 +20,7 @@ export default {
     background-color: #e2e2e2;
     border: 1px solid #ccc;
     border-radius: 4px;
-    width: 300px;
+    width: 350px;
     margin-right: 10px;
     padding: 10px;
 }

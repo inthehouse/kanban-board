@@ -75,7 +75,7 @@ export default {
         addNewColumn(columnName) {
             const newColumnId = Date.now().toString();
             const newColumn = new Column(newColumnId, columnName, []);
-            this.board.addColumn(newColumn); 
+            this.board.addColumn(newColumn);
             this.saveState();
             this.closeColumnPopup();
         },
@@ -99,7 +99,7 @@ export default {
 
 .kanban-board {
     display: flex;
-    overflow-x: auto;
+    justify-content: center;
 }
 
 .add-task-button,

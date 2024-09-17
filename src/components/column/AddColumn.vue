@@ -32,25 +32,61 @@ export default {
 
 <style scoped>
 .add-column-form {
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
 
+h3 {
+    margin-top: 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
 .form-actions {
-    margin-top: 10px;
     display: flex;
     justify-content: space-between;
 }
 
 button {
-    padding: 8px 16px;
+    padding: 10px 15px;
     border: none;
-    background-color: #007bff;
-    color: white;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
 }
 
 button[type="button"] {
     background-color: #6c757d;
+    color: white;
+}
+
+button[type="button"]:hover {
+    background-color: #5a6268;
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
     <div class="kanban-board-wrapper">
-        <button class="add-task-button" @click="showTaskPopup = true">Add Task</button>
-        <button class="add-column-button" @click="showColumnPopup = true">Add Column</button>
+        <div class="button-container">
+            <button class="add-task-button" @click="showTaskPopup = true">Add Task</button>
+            <button class="add-column-button" @click="showColumnPopup = true">Add Column</button>
+        </div>
 
         <div class="kanban-board">
             <DraggableBoardColumn v-for="column in board.columns" :key="column.id" :column="column"
@@ -97,14 +99,32 @@ export default {
     padding: 20px;
 }
 
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
 .kanban-board {
     display: flex;
     justify-content: center;
+    gap: 10px;
 }
 
 .add-task-button,
 .add-column-button {
-    margin-bottom: 10px;
-    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #007bff;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.add-task-button:hover,
+.add-column-button:hover {
+    background-color: #0056b3;
 }
 </style>

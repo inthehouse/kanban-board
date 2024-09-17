@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import AddTask from '@/components/task/AddTask.vue';
+import AddTask from '@/components/task/AddTaskCard.vue';
 
 export default {
     components: {

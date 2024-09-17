@@ -1,11 +1,16 @@
+import { Column } from "./Column";
 
 export class Board {
     constructor(columns = []) {
         this.columns = columns;
     }
 
-    addColumn(column) {
-        this.columns.push(column);
+    addColumn(columnData) {
+        const newColumn = typeof columnData === 'string'
+            ? new Column(Date.now().toString(), columnData, [])
+            : columnData;
+
+        this.columns.push(newColumn);
     }
 
     removeColumn(columnId) {
@@ -46,6 +51,6 @@ export class Board {
         }
 
         const [task] = fromColumn.tasks.splice(taskIndex, 1);
-        toColumn.addTask(task.title, task.description);
+        toColumn.addTask(task);
     }
 }

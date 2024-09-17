@@ -1,6 +1,7 @@
 <template>
     <div class="kanban-board-wrapper">
         <button class="add-task-button" @click="showTaskPopup = true">Add Task</button>
+        <button class="add-column-button" @click="showColumnPopup = true">Add Column</button>
 
         <div class="kanban-board">
             <DraggableBoardColumn v-for="column in board.columns" :key="column.id" :column="column"
@@ -10,12 +11,14 @@
 
         <TaskPopup v-if="showTaskPopup" :columns="board.columns" :showPopup="showTaskPopup" @addTask="addNewTask"
             @closePopup="closeTaskPopup" />
+        <AddColumnPopup v-if="showColumnPopup" @addColumn="addNewColumn" @closePopup="closeColumnPopup" />
     </div>
 </template>
 
 <script>
 import DraggableBoardColumn from '@/components/column/DraggableBoardColumn.vue';
 import TaskPopup from '@/components/task/TaskPopup.vue';
+import AddColumnPopup from '@/components/column/AddColumnPopup.vue';
 import { Board } from '@/models/Board';
 import { Column } from '@/models/Column';
 
@@ -23,11 +26,13 @@ export default {
     components: {
         DraggableBoardColumn,
         TaskPopup,
+        AddColumnPopup,
     },
     data() {
         return {
             board: new Board(),
             showTaskPopup: false,
+            showColumnPopup: false,
         };
     },
     methods: {
@@ -67,8 +72,18 @@ export default {
             this.saveState();
             this.closeTaskPopup();
         },
+        addNewColumn(columnName) {
+            const newColumnId = Date.now().toString();
+            const newColumn = new Column(newColumnId, columnName, []);
+            this.board.addColumn(newColumn); 
+            this.saveState();
+            this.closeColumnPopup();
+        },
         closeTaskPopup() {
             this.showTaskPopup = false;
+        },
+        closeColumnPopup() {
+            this.showColumnPopup = false;
         },
     },
     mounted() {
@@ -87,7 +102,9 @@ export default {
     overflow-x: auto;
 }
 
-.add-task-button {
+.add-task-button,
+.add-column-button {
     margin-bottom: 10px;
+    margin-right: 10px;
 }
 </style>

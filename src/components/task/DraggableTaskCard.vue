@@ -32,7 +32,7 @@ export default {
             group: 'tasks',
             animation: 150,
             onEnd: (event) => {
-                this.$emit('cardMoved', {
+                this.$emit('taskMoved', {
                     cardId: this.dataId,
                     fromColumnId: this.columnId,
                     toColumnId: event.from.dataset.columnId

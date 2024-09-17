@@ -68,8 +68,7 @@ export default {
         },
         addNewTask(task) {
             this.board.addTaskToColumn(task.columnId, {
-                title: task.title,
-                description: task.description,
+                ...task
             });
             this.saveState();
             this.closeTaskPopup();

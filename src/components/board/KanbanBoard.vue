@@ -19,7 +19,7 @@
 
 <script>
 import DraggableBoardColumn from '@/components/column/DraggableBoardColumn.vue';
-import TaskPopup from '@/components/task/TaskPopup.vue';
+import TaskPopup from '@/components/task/AddTaskCardPopup.vue';
 import AddColumnPopup from '@/components/column/AddColumnPopup.vue';
 import { Board } from '@/models/Board';
 import { Column } from '@/models/Column';

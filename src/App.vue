@@ -1,20 +1,18 @@
 <template>
   <div id="app">
-    <KanbanBoard />
+    <KanbanBoardView />
   </div>
 </template>
 
 <script>
-import KanbanBoard from './components/board/KanbanBoard.vue';
+import KanbanBoardView from '@/views/KanbanBoardView.vue';
 
 export default {
-  name: 'App',
   components: {
-    KanbanBoard,
+    KanbanBoardView,
   },
 };
 </script>
-
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

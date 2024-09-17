@@ -24,7 +24,7 @@ export class Board {
     addTaskToColumn(columnId, task) {
         const column = this.columns.find(col => col.id === columnId);
         if (column) {
-            column.addTask(task.title, task.description);
+            column.addTask(task);
         } else {
             console.error('Column not found');
         }

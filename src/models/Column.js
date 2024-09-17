@@ -4,6 +4,11 @@ export class Column {
         this.name = name;
         this.tasks = tasks;
     }
+
+    addTask(task) {
+        this.tasks.push(task);
+    }
+
     updateName(newName) {
         this.name = newName;
     }

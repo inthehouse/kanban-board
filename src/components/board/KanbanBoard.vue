@@ -55,12 +55,7 @@ export default {
             localStorage.setItem('kanbanBoardState', JSON.stringify(this.board.columns));
         },
         handleTaskMoved({ taskId, fromColumnId, toColumnId }) {
-            const fromColumn = this.board.columns.find(col => col.id === fromColumnId);
-            const toColumn = this.board.columns.find(col => col.id === toColumnId);
-            const task = fromColumn.tasks.find(t => t.id === taskId);
-
-            fromColumn.tasks = fromColumn.tasks.filter(t => t.id !== taskId);
-            toColumn.tasks.push(task);
+            this.board.moveTask(taskId, fromColumnId, toColumnId);
             this.saveState();
         },
         handleDeleteColumn({ columnId }) {

@@ -70,7 +70,8 @@ export default {
             }
         },
         sortTasks(option) {
-            this.sortOption = option;
+            this.column.sortTasks(option);
+            this.$emit('saveState'); 
         },
         saveColumnName() {
             if (this.editableColumnName.trim()) {
@@ -120,12 +121,7 @@ export default {
     },
     computed: {
         sortedTasks() {
-            if (!this.sortOption) return this.column.tasks;
-            const sortingFunctions = {
-                contentAsc: (a, b) => a.title.localeCompare(b.title),
-                contentDesc: (a, b) => b.title.localeCompare(a.title),
-            };
-            return [...this.column.tasks].sort(sortingFunctions[this.sortOption]);
+            return this.column.tasks;
         },
     },
 };

@@ -8,7 +8,7 @@
         <div class="kanban-board">
             <DraggableBoardColumn v-for="column in board.columns" :key="column.id" :column="column"
                 @taskMoved="handleTaskMoved" @deleteColumn="handleDeleteColumn"
-                @updateColumnName="handleUpdateColumnName" />
+                @updateColumnName="handleUpdateColumnName" @saveState="saveState" />
         </div>
 
         <TaskPopup v-if="showTaskPopup" :columns="board.columns" :showPopup="showTaskPopup" @addTask="addNewTask"

@@ -102,10 +102,6 @@ export default {
                     const fromColumnId = event.from?.dataset?.columnId;
                     const toColumnId = event.to?.dataset?.columnId;
 
-                    console.log('Task ID:', taskId);
-                    console.log('From Column ID:', fromColumnId);
-                    console.log('To Column ID:', toColumnId);
-
                     if (taskId && fromColumnId && toColumnId) {
                         this.$emit('taskMoved', {
                             taskId,

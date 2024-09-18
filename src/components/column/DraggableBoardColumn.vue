@@ -20,9 +20,8 @@
                 </div>
             </div>
         </template>
-        <div ref="sortableContainer" class="sortable-container">
-            <DraggableTaskCard v-for="task in sortedTasks" :key="task.id" :title="task.title"
-                :description="task.description" :data-id="task.id" @taskMoved="handleTaskMoved" />
+        <div ref="sortableContainer" :data-column-id="column.id" class="sortable-container">
+            <DraggableTaskCard v-for="task in sortedTasks" :key="task.id" :task="task" :data-id="task.id" />
         </div>
     </BoardColumn>
 </template>
@@ -54,24 +53,14 @@ export default {
     },
     methods: {
         handleTaskMoved(event) {
-            const item = event.item;
-            const toColumn = event.to;
-            if (item && toColumn) {
-                const taskId = item.dataset.id;
-                const fromColumnId = this.column.id;
-                const toColumnId = toColumn.dataset.columnId;
+            const taskId = event.item.dataset.id;
+            const toColumnId = event.to.dataset.columnId;
+            const fromColumnId = this.column.id;
 
-                if (taskId && toColumnId) {
-                    this.$emit('taskMoved', {
-                        taskId,
-                        fromColumnId,
-                        toColumnId,
-                    });
-                } else {
-                    console.error('Card ID or target column ID is missing');
-                }
+            if (taskId && toColumnId) {
+                this.$emit('taskMoved', { taskId, fromColumnId, toColumnId });
             } else {
-                console.error('Event item or target column is undefined');
+                console.error('Task ID or column ID is missing.');
             }
         },
         confirmDeleteColumn() {
@@ -95,14 +84,37 @@ export default {
         },
         toggleMenu() {
             this.isMenuOpen = !this.isMenuOpen;
-        }
+        },
     },
     mounted() {
         this.$nextTick(() => {
             Sortable.create(this.$refs.sortableContainer, {
                 group: 'tasks',
                 animation: 150,
-                onEnd: this.handleTaskMoved,
+                onEnd: (event) => {
+                    if (!event.item) {
+                        console.error('event.item is undefined');
+                        return;
+                    }
+
+                    const taskId = event.item?.dataset?.id;
+                    const fromColumnId = event.from?.dataset?.columnId;
+                    const toColumnId = event.to?.dataset?.columnId;
+
+                    console.log('Task ID:', taskId);
+                    console.log('From Column ID:', fromColumnId);
+                    console.log('To Column ID:', toColumnId);
+
+                    if (taskId && fromColumnId && toColumnId) {
+                        this.$emit('taskMoved', {
+                            taskId,
+                            fromColumnId,
+                            toColumnId,
+                        });
+                    } else {
+                        console.error('Error: Missing taskId, fromColumnId, or toColumnId');
+                    }
+                },
             });
         });
     },
@@ -115,10 +127,9 @@ export default {
             };
             return [...this.column.tasks].sort(sortingFunctions[this.sortOption]);
         },
-    }
+    },
 };
 </script>
-
 
 <style scoped>
 .sortable-container {

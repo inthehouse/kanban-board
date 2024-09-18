@@ -1,45 +1,27 @@
 <template>
-    <div ref="draggableCard" :data-id="dataId">
-        <TaskCard :title="title" />
+    <div ref="draggableCard" :data-id="task.id">
+        <TaskCard :title="task.title" />
     </div>
 </template>
 
 <script>
-import Sortable from 'sortablejs';
 import TaskCard from './TaskCard.vue';
 
 export default {
     name: 'DraggableTaskCard',
     components: {
-        TaskCard
+        TaskCard,
     },
     props: {
-        title: {
-            type: String,
-            required: true
-        },
-        dataId: {
-            type: String,
-            required: true
+        task: {
+            type: Object,
+            required: true,
         },
         columnId: {
             type: String,
-            required: true
-        }
+            required: true,
+        },
     },
-    mounted() {
-        Sortable.create(this.$refs.draggableCard, {
-            group: 'tasks',
-            animation: 150,
-            onEnd: (event) => {
-                this.$emit('taskMoved', {
-                    cardId: this.dataId,
-                    fromColumnId: this.columnId,
-                    toColumnId: event.from.dataset.columnId
-                });
-            }
-        });
-    }
 };
 </script>
 
